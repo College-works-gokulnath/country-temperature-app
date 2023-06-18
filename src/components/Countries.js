@@ -43,17 +43,21 @@ export default function Countries() {
     getCountries();
   }, []);
 
-  async function searchCountry() {
+  async function searchCountry() {    
     try {
+      // Country Request
       const res = await fetch(
         `https://restcountries.com/v3.1/name/${searchText}`
       );
+      // Country data
       const data = await res.json();
-      setCountries(data);
+      setCountries(data);      
+
     } catch (error) {
       console.error(error);
     }
   }
+  
 
   async function filterByRegion(region) {
     try {
@@ -122,8 +126,8 @@ export default function Countries() {
           </div>
 
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
-            {countries.map((country) => (
-              <Article key={country.name.common} {...country} />
+              {countries.map((country) => (
+                <Article key={country.name.common} {...country} />
             ))}
           </div>
         </section>
