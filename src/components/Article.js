@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function Article({
   flags,
@@ -10,8 +10,13 @@ export default function Article({
 }) {
 
   const [temp, setTemp] = useState(null);
+  const [popUp, setPopUp] = useState(false)
 
+  const navigate = useNavigate();
 
+  const handleDoubleClick = () => {
+    navigate(`/${name.common}`)
+  }
 
   async function getTemp() {
     const url = `https://weatherapi-com.p.rapidapi.com/forecast.json?q=${name.common}`
@@ -26,8 +31,8 @@ export default function Article({
 
     try {
       const result = await(await fetch(url, options)).json();
-
       setTemp(result.current.temp_c)
+      setPopUp(prevPopUp => !prevPopUp)
 
     } catch (error) {
       console.error(error);
@@ -35,14 +40,12 @@ export default function Article({
   }
 
   return (
-    <>
-      <Link to={`/${name.common}`}>
-        <article onMouseEnter={getTemp} onMouseLeave={()=>setTemp(null)} className="bg-white hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 transition-all duration-200 rounded-lg shadow overflow-hidden relative">
+        <article onClick={getTemp} className="bg-white hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 transition-all duration-200 rounded-lg shadow overflow-hidden relative">
           <img src={flags.svg} alt="" className="md:h-72 w-full object-cover" />
           <div className="p-4">
             <h2 className="font-bold text-lg text-gray-900 dark:text-white mb-2">
               {name.common}
-            </h2>
+            </h2> 
             <ul className="flex flex-col items-start justify-start gap-2 dark:text-gray-400">
               <li>Population: {population.toLocaleString()}</li>
               <li>Region: {region}</li>
@@ -50,15 +53,13 @@ export default function Article({
             </ul>
           </div>
 
-          { temp ? (
-            <div className="p-4 flex-col text-center absolute inset-0 text-black text-xl flex items-center justify-center" style={{backgroundImage: "linear-gradient(to bottom right, #FF61D2, #FE9090)"}}>
+          { popUp ? (
+            <div className="p-4 flex-col text-center absolute inset-0 text-white text-xl flex items-center justify-center bg-black/70" >
                 <p>Temperature at {name.common}: {temp}°C</p>
                 <br />
-                <p className="text-white">click to Know more!</p>
+                <p className="text-sm text-white  hover:text-purple-400 underline" onClick={handleDoubleClick}>Click here to Know more!</p>
             </div>
           ) : null}
         </article>
-      </Link>
-    </>
   );
 }
