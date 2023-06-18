@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
 export default function Article({
@@ -8,10 +8,14 @@ export default function Article({
   region,
   subregion,
 }) {
-  const [temp, setTemp] = useState("");
+
+  const [temp, setTemp] = useState(null);
+
+
 
   async function getTemp() {
     const url = `https://weatherapi-com.p.rapidapi.com/forecast.json?q=${name.common}`
+
     const options = {
       method: 'GET',
       headers: {
@@ -19,9 +23,12 @@ export default function Article({
         'X-RapidAPI-Host': 'weatherapi-com.p.rapidapi.com'
       }
     };
+
     try {
       const result = await(await fetch(url, options)).json();
+
       setTemp(result.current.temp_c)
+
     } catch (error) {
       console.error(error);
     }

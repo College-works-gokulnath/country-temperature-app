@@ -5,12 +5,30 @@ export default function SingleCountry() {
   const [country, setCountry] = useState([]);
   const { name } = useParams();
 
+  const [temp, setTemp] = useState(null); 
+
   useEffect(() => {
     const getSingleCountry = async () => {
       try {
         const res = await fetch(`https://restcountries.com/v3.1/name/${name}`);
         const data = await res.json();
+
+        // temperature call
+        const url = `https://weatherapi-com.p.rapidapi.com/forecast.json?q=${name}`;
+        const options = {
+          method: "GET",
+          headers: {
+            "X-RapidAPI-Key":
+              "2ad8f22d62mshed27fd7275e6797p1e974ajsnd785817b008c",
+            "X-RapidAPI-Host": "weatherapi-com.p.rapidapi.com",
+          },
+        };
+
+        const result = await(await fetch(url, options)).json();
+        setTemp(result.current.temp_c)
+  
         setCountry(data);
+
       } catch (error) {
         console.error(error);
       }
@@ -45,6 +63,7 @@ export default function SingleCountry() {
                 <li>Population: {item.population.toLocaleString()}</li>
                 <li>Region: {item.region}</li>
                 <li>Subregion: {item.subregion}</li>
+                <li>Temperature: {temp}°C</li>
               </ul>
 
               {item.borders && (

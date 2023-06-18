@@ -4,6 +4,10 @@ import Article from "./Article";
 export default function Countries() {
   const [countries, setCountries] = useState([]);
   const [searchText, setSearchText] = useState("");
+
+  const [loadMore, setLoadMore] = useState(10)
+
+  
   const regions = [
     {
       name: "Europe",
@@ -43,7 +47,8 @@ export default function Countries() {
     getCountries();
   }, []);
 
-  async function searchCountry() {    
+  
+  async function searchCountry() {
     try {
       // Country Request
       const res = await fetch(
@@ -51,13 +56,11 @@ export default function Countries() {
       );
       // Country data
       const data = await res.json();
-      setCountries(data);      
-
+      setCountries(data);
     } catch (error) {
       console.error(error);
     }
   }
-  
 
   async function filterByRegion(region) {
     try {
@@ -88,7 +91,7 @@ export default function Countries() {
           Loading...
         </h1>
       ) : (
-        <section className="container mx-auto p-8">
+        <section className="w-full mx-auto p-8">
           {/* form */}
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-8">
             <form
@@ -125,10 +128,13 @@ export default function Countries() {
             </form>
           </div>
 
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
-              {countries.map((country) => (
-                <Article key={country.name.common} {...country} />
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-4">
+            {countries.slice(0, loadMore).map((country) => (
+              <Article key={country.name.common} {...country} />
             ))}
+          </div>
+          <div className="flex justify-center items-center p-4">
+            <button onClick={() => setLoadMore( prev => prev += 10)} className="p-3 border-stone-900 border-2 text-black hover:text-white hover:bg-black transition-all	duration-700 rounded-sm ">{loadMore < 250 ? "Show More" : "Reach the end"}</button>
           </div>
         </section>
       )}
